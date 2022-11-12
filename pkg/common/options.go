@@ -39,7 +39,7 @@ func (o *CommonOptions) AddBaseFlags(cmd *cobra.Command) {
 		defaultBatchMode = true
 	}
 	cmd.PersistentFlags().BoolVarP(&o.BatchMode, OptionBatchMode, "b", defaultBatchMode, "Runs in batch mode without prompting for user input")
-	cmd.PersistentFlags().BoolVarP(&o.Verbose, OptionVerbose, "", false, "Enables verbose output")
+	cmd.PersistentFlags().BoolVarP(&o.Verbose, OptionVerbose, "v", false, "Enables verbose output")
 	cmd.PersistentFlags().BoolVarP(&o.Quiet, OptionQuiet, "q", false, "Enables quiet output")
 
 	o.Cmd = cmd

@@ -1,7 +1,7 @@
 GIT_SERVER 	:= github.com
 ORG         := Benbentwo
 REPO        := UnrealGameVersionUpdater
-BINARY 		:= go-bin-generic
+BINARY 		:= UnrealGameVersionUpdater
 
 # Pretty Constant stuff Below, Configurable above
 
