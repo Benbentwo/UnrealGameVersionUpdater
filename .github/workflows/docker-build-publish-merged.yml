@@ -1,0 +1,132 @@
+name: Merged
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged
+    steps:
+      - run: |
+          echo '${{toJson(github.event.pull_request)}}' > pr.json
+      - name: Artifact Binaries
+        uses: actions/upload-artifact@v2
+        with:
+          path: pr.json
+      - name: Setup Go environment
+        if: github.event.pull_request.merged
+        uses: actions/setup-go@v2.0.3
+        with:
+          go-version: 1.12.4
+
+      - name: Checkout
+        if: github.event.pull_request.merged
+        uses: actions/checkout@v1
+
+
+      - name: Pull request merged
+        if: github.event.pull_request.merged
+        id: get-release-type
+        run: |
+          if [[ "${{github.event.pull_request.state}}" == "closed" ]] || [[ "${{github.event.pull_request.merged}}" == "true" ]]; then
+            echo "Setting Defaults to patch"
+            echo "##[set-output name=release-type;]patch"
+            echo "##[set-output name=release-command;]-p"
+            echo "##[set-output name=merged;]true"
+            echo '${{toJson(github.event.pull_request)}}' > data.json
+            jq -r '.labels[] | .name' data.json > labels.txt
+            while IFS= read -r name; do
+              echo "Looking at label: \"${name}\""
+              if [[ ${name} =~ [rR]elease\ ([A-Za-z0-9_]+) ]] ; then
+                release_type=${BASH_REMATCH[1]}
+                echo "ReleaseType set to: \"${release_type}\""
+                if echo $release_type | grep -iqF patch; then
+                  echo "Overriding Default to Patch"
+                  echo "##[set-output name=release-type;]patch"
+                  echo "##[set-output name=release-command;]-p"
+                elif echo $release_type | grep -iqF minor; then
+                  echo "Overriding Default to Minor"
+                  echo "##[set-output name=release-type;]minor"
+                  echo "##[set-output name=release-command;]-m"
+                elif echo $release_type | grep -iqF major; then
+                  echo "Overriding Default to Major"
+                  echo "##[set-output name=release-type;]major"
+                  echo "##[set-output name=release-command;]-M"
+                else
+                  echo "Not sure what release this is, defaulting to patch"
+                  echo "##[set-output name=release-type;]patch"
+                  echo "##[set-output name=release-command;]-p"
+                fi
+              fi
+            done < labels.txt
+          else
+            echo "Was not started by pull request, setting to patch"
+            echo "##[set-output name=release-type;]patch"
+            echo "##[set-output name=release-command;]-p"
+          fi
+
+      - name: Debug Above Step
+        run: |
+          echo "${{steps.get-release-type.outputs.release-command}}"
+          echo "${{steps.get-release-type.outputs.release-type}}"
+      # https://github.com/Benbentwo/increment-semver
+      - name: Increment Step Patch
+        if: github.event.pull_request.merged
+        id: increment-semver-patch
+        uses: Benbentwo/increment-semver@master
+        with:
+          version-level: "${{steps.get-release-type.outputs.release-command}}"
+
+      - name: Make local Binaries
+        if: github.event.pull_request.merged
+        run: |
+          export VERSION=${{steps.docker_build.outputs.version}}
+          make all
+      #       Tag = <BranchName (Tag Safe)>-<Short Commit Hash>
+      - if: github.event.pull_request.merged
+        run: |
+          tag=${{ steps.increment-semver-patch.outputs.version }}
+          repository=$(echo ${{github.repository}} | tr '[:upper:]' '[:lower:]')
+          repo=$(echo ${{github.repository}} | awk -F '/' '{ print $2 }' | tr '[:upper:]' '[:lower:]')
+          github_image=${repository}/${repo}
+          docker build -t docker.pkg.github.com/${github_image} .
+          echo "##[set-output name=version;]$(echo ${tag})"
+          echo "##[set-output name=github_image;]$(echo ${github_image})"
+
+        id: docker_build
+
+      - name: Publish to Github Packages
+        if: github.event.pull_request.merged
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ${{ steps.docker_build.outputs.github_image }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          tags: "latest,${{steps.docker_build.outputs.version}}"
+          registry: docker.pkg.github.com
+
+      # https://github.com/marketplace/actions/create-a-release
+      - name: Create Release
+        if: github.event.pull_request.merged
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{steps.increment-semver-patch.outputs.version}}
+          release_name: ${{steps.increment-semver-patch.outputs.version}}
+          draft: false
+          prerelease: false
+
+# https://github.com/svenstaro/upload-release-action
+      - name: Upload binaries to release
+        if: github.event.pull_request.merged
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/*
+          tag: ${{steps.increment-semver-patch.outputs.version}}
+          file_glob: true

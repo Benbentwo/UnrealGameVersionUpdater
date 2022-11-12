@@ -1,0 +1,38 @@
+name: Docker Build
+on:
+  push:
+    branches-ignore:
+      - 'master'      # Push events to branches matching refs/heads/master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go environment
+        uses: actions/setup-go@v2.0.3
+        with:
+          go-version: 1.12.4
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Create Binaries
+        run: |
+          make all
+      - name: Artifact Binaries
+        uses: actions/upload-artifact@v2
+        with:
+          path: build/*
+      - name: Extract branch name
+        shell: bash
+        id: extract_branch
+#        Gets the branch name, then cleans up unsavory characters.
+#          Replaces:
+#             / -> -
+#          Limits Length to 120
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed 's@/@-@g' | sed 's/%2F/-/g' | cut -c1-119)"
+
+#      - uses: actions/download-artifact@v2
+#        with:
+#          path: build-artifacts/
+#
+#      - run: |
+#          ls -al build-artifacts/
+#          ls -al build-artifacts/artifact

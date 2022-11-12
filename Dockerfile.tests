@@ -1,0 +1,15 @@
+# Build Stage
+FROM golang:1.15
+
+LABEL app=""
+
+ENV PROJPATH=/go/src/github.com/Benbentwo/go-bin-generic
+
+# Because of https://github.com/docker/docker/issues/14914
+ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+ADD . /go/src/github.com/Benbentwo/go-bin-generic
+WORKDIR /go/src/github.com/Benbentwo/go-bin-generic
+
+#RUN make test           # Runs Tests
+#RUN make test-report    # Generates Testing Report
