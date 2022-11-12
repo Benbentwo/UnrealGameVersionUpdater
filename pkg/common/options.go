@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"github.com/Benbentwo/go-bin-generic/pkg/common/log"
+	"github.com/Benbentwo/UnrealGameVersionUpdater/pkg/common/log"
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1/terminal"

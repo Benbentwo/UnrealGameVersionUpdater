@@ -2,7 +2,7 @@ package version
 
 import (
 	"fmt"
-	"github.com/Benbentwo/go-bin-generic/pkg/common"
+	"github.com/Benbentwo/UnrealGameVersionUpdater/pkg/common"
 	"github.com/Benbentwo/utils/util"
 	"github.com/blang/semver"
 	"github.com/pkg/errors"

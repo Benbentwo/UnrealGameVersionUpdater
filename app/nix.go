@@ -3,7 +3,7 @@
 package app
 
 import (
-	"github.com/Benbentwo/go-bin-generic/cmd"
+	"github.com/Benbentwo/UnrealGameVersionUpdater/cmd"
 	"os"
 )
 

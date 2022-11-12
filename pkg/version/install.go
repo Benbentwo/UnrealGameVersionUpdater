@@ -2,7 +2,7 @@ package version
 
 import (
 	"fmt"
-	"github.com/Benbentwo/go-bin-generic/pkg/github"
+	"github.com/Benbentwo/UnrealGameVersionUpdater/pkg/github"
 	"github.com/Benbentwo/utils/util"
 	"github.com/blang/semver"
 	"io"
@@ -80,8 +80,8 @@ func (o *VersionOptions) InstallBin(upgrade bool, prefix string, version string)
 
 	// Set in the makefile
 	BinaryDownloadBaseURL := strings.Join([]string{GitServer, Org, Repo, "releases", "download", prefix}, "/")
-	// BinaryDownloadBaseURL := "https://github.com/Benbentwo/go-bin-generic/releases/download/v1.0.0/
-	// 							 https://github.com/Benbentwo/go-bin-generic/releases/download/v1.0.0/go-bin-generic-windows-amd64.zip"
+	// BinaryDownloadBaseURL := "https://github.com/Benbentwo/UnrealGameVersionUpdater/releases/download/v1.0.0/
+	// 							 https://github.com/Benbentwo/UnrealGameVersionUpdater/releases/download/v1.0.0/go-bin-generic-windows-amd64.zip"
 	clientURL := fmt.Sprintf("%s%s%s/"+binary+"-%s-%s%s", protocol, BinaryDownloadBaseURL, version, runtime.GOOS, runtime.GOARCH, extension)
 	fullPath := filepath.Join(binDir, fileName)
 	if runtime.GOOS == "windows" {

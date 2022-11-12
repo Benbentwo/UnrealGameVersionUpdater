@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Benbentwo/go-bin-generic/app"
+	"github.com/Benbentwo/UnrealGameVersionUpdater/app"
 	"os"
 )
 

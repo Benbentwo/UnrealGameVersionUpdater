@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/Benbentwo/go-bin-generic/pkg/common"
-	"github.com/Benbentwo/go-bin-generic/pkg/version"
+	"github.com/Benbentwo/UnrealGameVersionUpdater/pkg/common"
+	"github.com/Benbentwo/UnrealGameVersionUpdater/pkg/version"
 	"github.com/spf13/viper"
 	"io"
 	"strings"
