@@ -1,7 +1,7 @@
 FROM golang:1.18.6 AS builder
 
 # Build arguments
-ARG binary_name=main
+ARG binary_name=UnrealVersionSelector
     # See ./sample-data/go-os-arch.csv for a table of OS & Architecture for your base image
 ARG target_os=linux
 ARG target_arch=amd64
@@ -21,14 +21,12 @@ COPY . .
 RUN rm -rf /app/build
 RUN CGO_ENABLED=0 GOOS=${target_os} GOARCH=${target_arch} go build -a -o /app/build/${binary_name} main.go
 
-RUN ls /app
-
 #-----------------------------------------------------------------------------------------------------------------------
 
 FROM centos:7
 
 LABEL author="Benjamin Smith"
-COPY --from=builder ./app/build/main /usr/bin/UnrealVersionSelector
+COPY --from=builder ./app/build/UnrealVersionSelector /usr/bin/UnrealVersionSelector
 RUN ["chmod", "+x", "/usr/bin/UnrealVersionSelector"]
 
 ENTRYPOINT ["/usr/bin/UnrealVersionSelector"]
