@@ -1,4 +1,4 @@
-FROM golang:1.12.4 AS builder
+FROM golang:1.18.6 AS builder
 
 # Build arguments
 ARG binary_name=main
@@ -28,7 +28,7 @@ RUN ls /app
 FROM centos:7
 
 LABEL author="Benjamin Smith"
-COPY --from=builder ./app/build/main /usr/bin/main
-RUN ["chmod", "-R", "+x", "/usr/bin/main"]
+COPY --from=builder ./app/build/main /usr/bin/UnrealVersionSelector
+RUN ["chmod", "+x", "/usr/bin/UnrealVersionSelector"]
 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["/usr/bin/UnrealVersionSelector"]

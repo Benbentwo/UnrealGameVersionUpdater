@@ -1,0 +1,16 @@
+name: 'Unreal Game Version Updater'
+description: 'Updates an unreal engine based game to the specified version'
+inputs:
+  version:                            # id of input
+    description: 'What to set the version to'
+    required: true
+  verbose:
+    description: 'verbose logging'
+    required: false
+    default: "-v"
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.version }}
+    - ${{ inputs.verbose }}
