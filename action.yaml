@@ -7,10 +7,10 @@ inputs:
   verbose:
     description: 'verbose logging'
     required: false
-    default: "-v"
+    default: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.version }}
-    - ${{ inputs.verbose }}
+    - ${{ inputs.verbose && '-v'}}

@@ -5,7 +5,7 @@ ARG binary_name=UnrealVersionSelector
     # See ./sample-data/go-os-arch.csv for a table of OS & Architecture for your base image
 ARG target_os=linux
 ARG target_arch=amd64
-
+ARG VERSION=dev
 # Build the server Binary
 WORKDIR /app
 #WORKDIR /go/src/${GIT_SERVER}/${GIT_ORG}/${GIT_REPO}
@@ -19,7 +19,8 @@ RUN go mod download
 COPY . .
 
 RUN rm -rf /app/build
-RUN CGO_ENABLED=0 GOOS=${target_os} GOARCH=${target_arch} go build -a -o /app/build/${binary_name} main.go
+
+RUN CGO_ENABLED=0 GOOS=${target_os} GOARCH=${target_arch} go build -a -ldflags " -X github.com/Benbentwo/UnrealGameVersionUpdater/pkg/version.Version=$(VERSION)" -o /app/build/${binary_name} main.go
 
 #-----------------------------------------------------------------------------------------------------------------------
 
