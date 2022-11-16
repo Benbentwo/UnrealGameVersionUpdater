@@ -30,4 +30,6 @@ LABEL author="Benjamin Smith"
 COPY --from=builder ./app/build/UnrealVersionSelector /usr/bin/UnrealVersionSelector
 RUN ["chmod", "+x", "/usr/bin/UnrealVersionSelector"]
 
+WORKDIR /app
+
 ENTRYPOINT ["/usr/bin/UnrealVersionSelector"]
