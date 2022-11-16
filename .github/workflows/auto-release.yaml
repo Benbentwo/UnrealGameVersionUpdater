@@ -22,6 +22,6 @@ jobs:
         with:
           publish: ${{ !contains(steps.get-merged-pull-request.outputs.labels, 'no-release') }}
           prerelease: false
-          config-name: auto-release.yml
+          config-name: auto-release.yaml
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
