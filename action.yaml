@@ -10,7 +10,7 @@ inputs:
     default: false
 runs:
   using: 'docker'
-  image: ghcr.io/benbentwo/unrealgameversionupdater:latest
+  image: docker://ghcr.io/benbentwo/unrealgameversionupdater:latest
   args:
     - ${{ inputs.version }}
     - ${{ inputs.verbose && '-v'}}
