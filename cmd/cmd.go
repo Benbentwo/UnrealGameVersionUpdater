@@ -54,6 +54,12 @@ func NewMainCmd(in terminal.FileReader, out terminal.FileWriter, err io.Writer, 
 	return cmd
 }
 
+type GeneralProjectSettings struct {
+	ProjectID      string `json:"ProjectID"`
+	ProjectName    string `json:"ProjectName"`
+	ProjectVersion string `json:"ProjectVersion"`
+}
+
 func run(cmd *cobra.Command, args []string) {
 	version := args[0]
 	log.Logger().Debugf("Setting Version to %s", version)
@@ -71,7 +77,7 @@ func run(cmd *cobra.Command, args []string) {
 		foundVersion := ""
 		filePath := path.Join(configDir, file.Name())
 		if glob.Glob("*.ini", file.Name()) {
-			cfg, err := ini.Load(filePath)
+			cfg, err := ini.ShadowLoad(filePath)
 			if err != nil {
 				log.Logger().Fatalf("Failed to load ini file: %s: %s", filePath, err)
 			}
@@ -89,7 +95,7 @@ func run(cmd *cobra.Command, args []string) {
 		log.Logger().Fatalln("Haven't implemented adding in a version if not already found.")
 	}
 
-	cfg, err := ini.Load(FileFoundIn)
+	cfg, err := ini.ShadowLoad(FileFoundIn)
 	cfg.Section(SectionHeader).Key(ProjectVersionKey).SetValue(version)
 	cfg.SaveTo(FileFoundIn)
 

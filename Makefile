@@ -150,3 +150,8 @@ fmt: ## Format the code
       	fi
 
 all: linux arm win win32 darwin
+
+end-test:
+	./build/UnrealGameVersionUpdater --config ../edraith/Config 1.0.0 -v
+
+end-to-end: clean build end-test
